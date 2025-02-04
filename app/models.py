@@ -34,3 +34,10 @@ class Order(Model):
     class Meta:
         table = "orders"
 
+class Post(Model):
+    id = fields.IntField(pk=True)
+    product: fields.ForeignKeyRelation[Product] = fields.ForeignKeyField("models.Product", related_name="posts")
+    link = fields.CharField(max_length=255)
+    description = fields.TextField()
+    type = fields.CharField(max_length=50)  # "image" ou "video"
+
