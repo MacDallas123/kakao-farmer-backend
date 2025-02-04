@@ -1,7 +1,11 @@
 import hashlib, hmac, base64, json, time
 from datetime import datetime, timedelta
-from fastapi import HTTPException, status
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from app.config import SECRET_KEY
+from app.models import User
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
 def hash_password(password: str) -> str:
     """ Hashage du mot de passe avec SHA-256 """
@@ -44,4 +48,20 @@ def decode_access_token(token: str):
         return payload
     except Exception:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    payload = decode_access_token(token)
+    username: str = payload.get("sub")
+    
+    user = await User.filter(username=username).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    
+    return user
+
+async def get_current_seller(current_user: User = Depends(get_current_user)):
+    if current_user.status != "seller":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have access to this resource.")
+    return current_user
 
