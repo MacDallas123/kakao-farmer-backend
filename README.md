@@ -62,7 +62,7 @@ http://127.0.0.1:8000
 ## Points de terminaison API
 
 ### Créer un utilisateur
-**POST** `/register`
+**POST** `users/register`
 - **Corps de la requête (JSON)** :
 ```json
 {
