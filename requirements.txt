@@ -4,3 +4,4 @@ tortoise-orm
 pydantic
 email-validator
 python-multipart
+fpdf
