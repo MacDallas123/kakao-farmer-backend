@@ -1,23 +1,21 @@
 from tortoise import fields, Model
-from enum import Enum
 
-class UserType(str, Enum):
-    CLIENT = "client"
-    CACAOCULTEUR = "cacaoculteur"
-    ADMIN = "admin"
 
 class User(Model):
     id = fields.IntField(pk=True)
+    name = fields.CharField(max_length=100)
     email = fields.CharField(max_length=255, unique=True)
+    username = fields.CharField(max_length=50, unique=True, null=True)
     password = fields.CharField(max_length=255)
-    type = fields.CharEnumField(UserType)
+    status = fields.CharField(max_length=20, default="user") # admin, farmer, user
+    
     notifications = fields.ReverseRelation["Notification"]  # Defines a reverse relation to Notification model
-    transactions = fields.ReverseRelation["Transaction"]  # Defines a reverse relation to Transaction model
     products = fields.ReverseRelation["Product"]  # Defines a reverse relation to Product model
-    posts_likes = fields.ManyToManyField("models.Post", related_name="likes", through="like")
+    posts_likes = fields.ManyToManyField("models.Post", related_name="liked_posts", through="like")
 
     class Meta:
         table = "users"
+
 
 class Product(Model):
     id = fields.IntField(pk=True)
@@ -30,6 +28,7 @@ class Product(Model):
     class Meta:
         table = "products"
 
+
 class Order(Model):
     id = fields.IntField(pk=True)
     product = fields.ForeignKeyField("models.Product", related_name="orders")
@@ -37,14 +36,37 @@ class Order(Model):
     quantity = fields.IntField()
     status = fields.CharField(max_length=20, default="pending")
     total_price = fields.FloatField()
+    date = fields.CharField(max_length=255)
 
     class Meta:
         table = "orders"
 
 class Post(Model):
     id = fields.IntField(pk=True)
-    product: fields.ForeignKeyRelation[Product] = fields.ForeignKeyField("models.Product", related_name="posts")
+    product = fields.ForeignKeyField("models.Product", related_name="posts")
     link = fields.CharField(max_length=255)
     description = fields.TextField()
     type = fields.CharField(max_length=50)  # "image" ou "video"
+    likes = fields.ManyToManyField("models.User", related_name="liked_posts", through="like")
 
+    class Meta:
+        table = "posts"
+
+class Notification(Model):
+    id = fields.IntField(pk=True)
+    title = fields.CharField(max_length=255)
+    content = fields.TextField()
+    user = fields.ForeignKeyField("models.User", related_name="notifications")
+
+    class Meta:
+        table = "notification"
+
+class Formation(Model):
+    id = fields.IntField(pk=True)
+    content = fields.TextField(null=True)
+    link = fields.CharField(max_length=255, null=True)
+    description = fields.TextField()
+    type = fields.CharField(max_length=50)  # "texte" ou "video"
+
+    class Meta:
+        table = "formations"

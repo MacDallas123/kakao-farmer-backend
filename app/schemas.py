@@ -7,6 +7,9 @@ class UserCreate(BaseModel):
     password: str
     status: str = "user"
 
+class UserLogin(BaseModel):
+    identifier: str
+    password: str
 
 class Token(BaseModel):
     access_token: str
