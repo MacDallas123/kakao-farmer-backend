@@ -12,3 +12,25 @@ class User(Model):
     class Meta:
         table = "users"
 
+class Product(Model):
+    id = fields.IntField(pk=True)
+    seller = fields.ForeignKeyField("models.User", related_name="products")
+    name = fields.CharField(max_length=100)
+    price = fields.FloatField()
+    city = fields.CharField(max_length=50)
+    stock = fields.IntField()
+
+    class Meta:
+        table = "products"
+
+class Order(Model):
+    id = fields.IntField(pk=True)
+    product = fields.ForeignKeyField("models.Product", related_name="orders")
+    user = fields.ForeignKeyField("models.User", related_name="orders")
+    quantity = fields.IntField()
+    status = fields.CharField(max_length=20, default="pending")
+    total_price = fields.FloatField()
+
+    class Meta:
+        table = "orders"
+
