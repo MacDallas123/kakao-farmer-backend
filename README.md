@@ -11,17 +11,34 @@ Cette application FastAPI permet l'authentification des utilisateurs avec un sys
 ```bash
 copier l'archive
 ```
+### 2 - Environnement
 
-### 2. Créer un environnement virtuel (optionnel mais recommandé)
+Choisissez l'une des options suivantes, celle qui vous convient
+
+#### OPTION 1 : Utilisation d'un environnement virtuel
+
+##### a. Créer un environnement virtuel
 ```bash
 python -m venv env
 source env/bin/activate  # Sur Mac/Linux
 env\Scripts\activate    # Sur Windows
 ```
 
-### 3. Installer les dépendances
+##### b. Installer les dépendances
 ```bash
-pip install fastapi uvicorn tortoise-orm pydantic
+pip install fastapi uvicorn tortoise-orm pydantic email-validator python-multipart
+```
+#### OPTION 2 : Utilisation d'un environnement docker
+
+##### a. Installer docker dans votre système
+
+Suivre la documentation appropriée en fonction du système dans lequel vous vous trouvez
+
+##### b. Construire l'image docker
+```bash
+cd Kakao-farmer_backend
+
+docker build -t kakao-farmer-backend .
 ```
 
 ## Configuration de la base de données
@@ -32,7 +49,9 @@ L'application utilise **SQLite**. Aucun réglage supplémentaire n'est nécessai
 ### 1. Démarrer le serveur
 Assurez-vous d’être à la racine du projet, puis exécutez :
 ```bash
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload # Apres avoir demarrer l'environnement virtuel (OPTION 1)
+
+docker run -p 8000:8000 kakao-farmer-backend # (OPTION 2)
 ```
 
 L’API sera accessible à l’adresse suivante :
