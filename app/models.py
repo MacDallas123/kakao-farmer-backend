@@ -19,69 +19,32 @@ class User(Model):
     class Meta:
         table = "users"
 
-class Notification(Model):
+class Product(Model):
     id = fields.IntField(pk=True)
-    titre = fields.CharField(max_length=255)
-    contenu = fields.TextField()
-    user = fields.ForeignKeyField("models.User", related_name="notifications")
+    seller = fields.ForeignKeyField("models.User", related_name="products")
+    name = fields.CharField(max_length=100)
+    price = fields.FloatField()
+    city = fields.CharField(max_length=50)
+    stock = fields.IntField()
 
     class Meta:
-        table = "notifications"
+        table = "products"
 
-class Transaction(Model):
+class Order(Model):
     id = fields.IntField(pk=True)
-    montant = fields.FloatField()
-    motif = fields.CharField(max_length=255)
-    date = fields.CharField(max_length=255)
-    quantite = fields.CharField(max_length=255)
-    user = fields.ForeignKeyField("models.User", related_name="transactions")
-    produit = fields.ForeignKeyField("models.Produit", related_name="transactions")
+    product = fields.ForeignKeyField("models.Product", related_name="orders")
+    user = fields.ForeignKeyField("models.User", related_name="orders")
+    quantity = fields.IntField()
+    status = fields.CharField(max_length=20, default="pending")
+    total_price = fields.FloatField()
 
     class Meta:
-        table = "transactions"
+        table = "orders"
 
-class Produit(Model):
+class Post(Model):
     id = fields.IntField(pk=True)
-    nom = fields.CharField(max_length=255)
-    pix = fields.CharField(max_length=255)
+    product: fields.ForeignKeyRelation[Product] = fields.ForeignKeyField("models.Product", related_name="posts")
+    link = fields.CharField(max_length=255)
     description = fields.TextField()
-    quantite = fields.CharField(max_length=255)
-    user = fields.ForeignKeyField("models.User", related_name="produits")
-    transactions = fields.ReverseRelation["Transaction"]  # Defines a reverse relation to Transaction model
+    type = fields.CharField(max_length=50)  # "image" ou "video"
 
-    class Meta:
-        table = "produit"
-
-class Poste(Model):
-    id = fields.IntField(pk=True)
-    type = fields.CharField(max_length=50, null=True)  # 'video' ou 'texte'
-    likes = fields.ManyToManyField("models.User", related_name="liked_posts", through="like")
-    video = fields.ReverseRelation["Video"]
-    texte = fields.ReverseRelation["Texte"]
-
-    class Meta:
-        table = "poste"
-
-class Video(Model):
-    id = fields.IntField(pk=True)
-    idVideo = fields.CharField(max_length=255)
-    poste = fields.OneToOneField("models.Poste", related_name="video")
-
-    class Meta:
-        table = "video"
-
-class Texte(Model):
-    id = fields.IntField(pk=True)
-    contenu = fields.TextField()
-    poste = fields.OneToOneField("models.Poste", related_name="texte")
-
-    class Meta:
-        table = "texte"
-
-class Formation(Model):
-    id = fields.IntField(pk=True)
-    videos = fields.ManyToManyRelation["Video"]
-    textes = fields.ManyToManyRelation["Texte"]
-
-    class Meta:
-        table = "formation"
