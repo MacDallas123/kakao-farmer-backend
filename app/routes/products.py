@@ -29,6 +29,15 @@ async def get_products(current_user=Depends(get_current_seller)):
     products = await Product.filter(seller=current_user).all()
     return products
 
+# Obtenir un produit specifique
+@router.get("/products/{product_id}", response_model=ProductResponse)
+async def get_products(product_id : int, current_user=Depends(get_current_seller)):
+    product = await Product.filter(id=product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    return product
+
 # Mise à jour d'un produit
 @router.put("/products/{product_id}", response_model=ProductResponse)
 async def update_product(product_id: int, product: ProductCreate, current_user=Depends(get_current_seller)):

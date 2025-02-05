@@ -6,6 +6,7 @@ from app.schemas import UserCreate, Token, UserLogin, UserResponse
 from app.auth import hash_password, verify_password, create_access_token
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from tortoise.expressions import Q
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/users", tags=["Utilisateurs"])
 
@@ -55,6 +56,12 @@ async def login(user: UserLogin):
 
 
 @router.get("/", response_model=list[UserResponse])
-async def get_users():
+async def get_users(current_user = Depends(get_current_user)):
     users = await User.all()
     return users
+
+
+@router.get("/{user_id}", response_model=UserResponse)
+async def get_users(user_id : int, current_user = Depends(get_current_user)):
+    user = await User.filter(id = user_id).first()
+    return user

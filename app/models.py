@@ -50,6 +50,7 @@ class Post(Model):
     description = fields.TextField()
     type = fields.CharField(max_length=50)  # "image" ou "video"
     likes = fields.ManyToManyField("models.User", related_name="liked_posts", through="likes")
+    date = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
         table = "posts"
