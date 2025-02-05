@@ -50,7 +50,6 @@ class Post(Model):
     description = fields.TextField()
     type = fields.CharField(max_length=50)  # "image" ou "video"
     likes = fields.ManyToManyField("models.User", related_name="liked_posts", through="likes")
-    user = fields.ForeignKeyField("models.User", related_name="posts")
 
     class Meta:
         table = "posts"
@@ -73,6 +72,7 @@ class Formation(Model):
     description = fields.TextField(null=True)
     type = fields.CharField(max_length=50)  # "texte" ou "video"
     date = fields.DatetimeField(auto_now_add=True)
+    user = fields.ForeignKeyField("models.User", related_name="posts")
 
     class Meta:
         table = "formations"

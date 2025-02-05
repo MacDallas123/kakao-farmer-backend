@@ -16,6 +16,8 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    user_id : int
+    user_status : str
 
     
 
@@ -61,7 +63,7 @@ class PostCreate(BaseModel):
     product_id: int
     link: str
     description: str
-    type: str  # "image" ou "video"
+    type: str = "image" # "image" ou "video"
 
 class PostResponse(BaseModel):
     id: int
@@ -69,6 +71,7 @@ class PostResponse(BaseModel):
     link: str
     description: str
     type: str
+    product__seller_id : int
 
     class Config:
         orm_mode = True
