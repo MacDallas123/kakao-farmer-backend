@@ -93,7 +93,23 @@ http://127.0.0.1:8000
 ```http
 Authorization: Bearer <TOKEN>
 ```
+### Creer des postes
+**POST** `posts`
 
+- **Headers** :
+```http
+Authorization: Bearer <TOKEN>
+```
+
+- **Body**
+```json
+{
+    "product_id" : 1,
+    "link" : "image_or_video_link",
+    "description" : "Cacao",
+    "type" : "image" // video or image
+}
+```
 ## Structure du projet
 ```
 app/

@@ -22,7 +22,7 @@ class Token(BaseModel):
     
 
 class ProductCreate(BaseModel):
-    seller_id: int
+    # seller_id: int
     name: str
     price: float
     city: str
@@ -31,7 +31,7 @@ class ProductCreate(BaseModel):
 
 class ProductResponse(BaseModel):
     id: int
-    seller: int  # ID du vendeur
+    seller_id: int  # ID du vendeur
     name: str
     price: float
     city: str
@@ -71,7 +71,6 @@ class PostResponse(BaseModel):
     link: str
     description: str
     type: str
-    product__seller_id : int
 
     class Config:
         orm_mode = True

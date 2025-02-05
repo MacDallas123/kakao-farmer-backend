@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.database import init_db, close_db
-from app.routes import posts, users, protected, notifications, formations
+from app.routes import posts, users, protected, notifications, formations, products
 
 app = FastAPI()
 
@@ -17,3 +17,4 @@ app.include_router(notifications.router)
 app.include_router(formations.router)
 app.include_router(protected.router)
 app.include_router(posts.router)
+app.include_router(products.router)

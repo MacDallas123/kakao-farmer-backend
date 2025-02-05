@@ -28,11 +28,24 @@ async def delete_post(post_id: int, current_user=Depends(get_current_seller)):
     return {"msg": "Post deleted successfully"}
 
 #lister les posts d'un vendeurs precis 
-@router.get("/posts/", response_model=list[PostResponse])
+@router.get("/user-posts/", response_model=list[PostResponse])
 async def get_posts(current_user=Depends(get_current_seller)):
-    posts = await PostModel.filter(product__user=current_user).prefetch_related("product")
+    posts = await PostModel.filter(product__seller=current_user).prefetch_related("product")
     return posts
 
+
+# lister tous les postes
+@router.get("/posts/", response_model=list[PostResponse])
+async def get_posts(current_user=Depends(get_current_seller)):
+    posts = await PostModel.all()
+    return posts
+
+#lister les posts avec pagination
+
+"""@router.get("/posts/paginated/?skip={skip}&limit={limit}", response_model=list[PostResponse])
+async def get_paginated_posts(skip: int = 0, limit: int = 1, current_user=Depends(get_current_seller)):
+    posts = await PostModel.all().offset(skip).limit(limit).prefetch_related("product")
+    return posts"""
 
 #rechercher un post (videos images) en entrant le nom(cacao ou semence) ou le type (type de cacao ou type de semence )
 @router.get("/posts/search/", response_model=list[PostResponse])
