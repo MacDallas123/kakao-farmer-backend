@@ -7,6 +7,12 @@ async def init_db():
         db_url=DB_URL,
         modules={"models": ["app.models"]}
     )
+
+    
+    # Supprimer toutes les tables
+    await Tortoise._drop_databases()
+
+    # Créer toutes les tables
     await Tortoise.generate_schemas()
 
 async def close_db():

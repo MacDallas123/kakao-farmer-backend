@@ -31,6 +31,7 @@ async def create_order(order: OrderCreate, current_user=Depends(get_current_user
 @router.get("/orders/", response_model=list[OrderResponse])
 async def get_user_orders(current_user=Depends(get_current_user)):
     orders = await Order.filter(user=current_user).all()
+    print(orders)
     return orders
 
 # Annuler une commande

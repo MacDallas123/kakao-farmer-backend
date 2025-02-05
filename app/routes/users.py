@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import timedelta
 from app.models import User
-from app.schemas import UserCreate, Token, UserLogin
+from app.schemas import UserCreate, Token, UserLogin, UserResponse
 from app.auth import hash_password, verify_password, create_access_token
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from tortoise.expressions import Q
@@ -49,4 +49,12 @@ async def login(user: UserLogin):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Identifiants incorrects")
 
     access_token = create_access_token({"sub": existing_user.username}, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
-    return {"access_token": access_token, "token_type": "bearer"}
+    user_id = existing_user.id
+    user_status = existing_user.status
+    return {"user_id": user_id, "user_status": user_status,"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/", response_model=list[UserResponse])
+async def get_users():
+    users = await User.all()
+    return users

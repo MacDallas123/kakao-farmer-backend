@@ -10,8 +10,10 @@ class User(Model):
     status = fields.CharField(max_length=20, default="user") # admin, farmer, user
     
     notifications = fields.ReverseRelation["Notification"]  # Defines a reverse relation to Notification model
-    products = fields.ReverseRelation["Product"]  # Defines a reverse relation to Product model
-    posts_likes = fields.ManyToManyField("models.Post", related_name="liked_posts", through="like")
+    products = fields.ReverseRelation["Product"]   # Defines a reverse relation to Product model
+    orders = fields.ReverseRelation["Order"]  # Defines a reverse relation to Order model
+    formations = fields.ReverseRelation["Formation"]  # Defines a reverse relation to Formation model
+    posts_likes = fields.ManyToManyField("models.Post", related_name="liked_posts", through="likes")
 
     class Meta:
         table = "users"
@@ -47,7 +49,8 @@ class Post(Model):
     link = fields.CharField(max_length=255)
     description = fields.TextField()
     type = fields.CharField(max_length=50)  # "image" ou "video"
-    likes = fields.ManyToManyField("models.User", related_name="liked_posts", through="like")
+    likes = fields.ManyToManyField("models.User", related_name="liked_posts", through="likes")
+    user = fields.ForeignKeyField("models.User", related_name="posts")
 
     class Meta:
         table = "posts"
@@ -57,16 +60,19 @@ class Notification(Model):
     title = fields.CharField(max_length=255)
     content = fields.TextField()
     user = fields.ForeignKeyField("models.User", related_name="notifications")
+    date = fields.DatetimeField(auto_now_add=True)
+    read_at = fields.DatetimeField(null=True)
 
     class Meta:
-        table = "notification"
+        table = "notifications"
 
 class Formation(Model):
     id = fields.IntField(pk=True)
     content = fields.TextField(null=True)
     link = fields.CharField(max_length=255, null=True)
-    description = fields.TextField()
+    description = fields.TextField(null=True)
     type = fields.CharField(max_length=50)  # "texte" ou "video"
+    date = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
         table = "formations"
