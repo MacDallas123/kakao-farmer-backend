@@ -1,4 +1,5 @@
 # app/routers/orders.py
+from collections import defaultdict
 from fastapi import APIRouter, Depends, HTTPException
 from app.models import Product, Order
 from app.schemas import OrderCreate, OrderResponse
@@ -103,3 +104,29 @@ async def validate_order(order_id: int, current_user=Depends(get_current_seller)
     send_email_notification(order.user.email, "Order Confirmation", f"Your order has been validated. Invoice: {pdf_file_path}")
 
     return {"msg": "Order validated successfully"}
+
+
+
+
+##### METHODES QUI COMMUNIQUE LES DONNÉES POUR LE TABLEAU DE BORD #####
+
+@router.get("/sales_stats/")
+async def get_sales_stats(current_user=Depends(get_current_seller)):
+    # Récupérer toutes les commandes validées du vendeur
+    orders = await Order.filter(
+        product__seller=current_user,
+        status="validated"  # Filtre pour ne prendre que les commandes validées
+    ).prefetch_related("product").all()
+    
+    # Dictionnaire pour stocker le nombre de ventes par produit par mois
+    sales_stats = defaultdict(lambda: defaultdict(int))
+
+    for order in orders:
+        # Récupérer le mois et l'année de la date de la commande
+        month = order.created_at.strftime("%Y-%m")  # Format YYYY-MM
+        product_name = order.product.name
+        
+        # Incrémenter le compteur
+        sales_stats[product_name][month] += order.quantity
+
+    return sales_stats
