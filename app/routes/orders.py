@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.models import Product, Order
 from app.schemas import OrderCreate, OrderResponse
 from app.auth import get_current_user, get_current_seller
-from app.notifications import send_email_notification
+from app.routes.notifications import send_email_notification
 from fpdf import FPDF  # Pour générer le PDF
 
 router = APIRouter()
