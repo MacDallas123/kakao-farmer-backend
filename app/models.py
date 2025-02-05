@@ -30,6 +30,8 @@ class Order(Model):
     quantity = fields.IntField()
     status = fields.CharField(max_length=20, default="pending")
     total_price = fields.FloatField()
+    created_at = fields.DatetimeField(auto_now_add=True)  # Ajout du champ créé à
+
 
     class Meta:
         table = "orders"
