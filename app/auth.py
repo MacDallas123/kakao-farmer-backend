@@ -18,7 +18,7 @@ def verify_password(plain_password, hashed_password):
 def create_access_token(data: dict, expires_delta: timedelta = None):
     """ Génération d'un token JWT """
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    expire = datetime.now() + (expires_delta or timedelta(minutes=60 * 24))
     to_encode.update({"exp": int(expire.timestamp())})
 
     header = {"alg": "HS256", "typ": "JWT"}
@@ -39,15 +39,17 @@ def decode_access_token(token: str):
         expected_signature_b64 = base64.urlsafe_b64encode(expected_signature).decode().rstrip("=")
 
         if not hmac.compare_digest(signature_b64, expected_signature_b64):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token r")
 
         payload = json.loads(base64.urlsafe_b64decode(payload_b64 + "==").decode())
+        
         if payload["exp"] < int(time.time()):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Token expired {payload} - {int(time.time())}")
 
         return payload
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Invalid token p {str(e)}")
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -56,7 +58,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     
     user = await User.filter(username=username).first()
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token " + token)
     
     return user
 

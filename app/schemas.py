@@ -1,4 +1,6 @@
 from pydantic import BaseModel, EmailStr
+from datetime import datetime
+from typing import List
 
 class UserCreate(BaseModel):
     name: str
@@ -70,3 +72,46 @@ class PostResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+
+class NotificationCreate(BaseModel):
+    user_id: int
+    title: str
+    content: str
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    username: str
+    email: EmailStr
+    status: str = "user"
+
+class NotificationResponse(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    content: str
+    date : datetime
+
+class VideoFormationCreate(BaseModel):
+    link : str
+    user_id: int
+    description : str
+    type : str = "video"  # "texte" ou "video"
+
+
+class TextFormationCreate(BaseModel):
+    user_id: int
+    type : str = "texte"  # "texte" ou "video"
+    content : str
+    user_id: int
+
+class FormationResponse(BaseModel):
+    id: int
+    user_id: int
+    content: str
+    link : str
+    description : str
+    type : str
+    date : datetime
