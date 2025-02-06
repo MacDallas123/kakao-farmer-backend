@@ -59,6 +59,18 @@ async def cancel_order(order_id: int, current_user=Depends(get_current_user)):
 
     return {"msg": "Order canceled successfully"}
 
+# Valid money transaction
+@router.patch("/orders/{order_id}/pay", dependencies=[Depends(get_current_user)])
+async def pay_order(order_id: int, current_user=Depends(get_current_user)):
+    order = await Order.filter(id=order_id, user=current_user).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    order.payed = True
+    await order.save()
+
+    return {"msg": "Order payed successfully"}
+
 
 # Liste des commandes en attente pour les produits d'un vendeur
 @router.get("/orders/pending/", response_model=list[OrderResponse])
