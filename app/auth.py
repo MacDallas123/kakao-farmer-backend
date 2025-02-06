@@ -65,3 +65,7 @@ async def get_current_seller(current_user: User = Depends(get_current_user)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have access to this resource.")
     return current_user
 
+
+async def is_admin(current_user=Depends(get_current_user)):
+    if current_user.status != 'admin':  # Vérifiez si le statut est 'admin'
+        raise HTTPException(status_code=403, detail="Not enough permissions")

@@ -67,3 +67,17 @@ class PostResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class TrainingMaterialCreate(BaseModel):
+    title: str
+    video_url: str
+
+class TrainingMaterialResponse(BaseModel):
+    id: int
+    title: str
+    video_url: str
+    created_at: str
+
+    class Config:
+        orm_mode = True
