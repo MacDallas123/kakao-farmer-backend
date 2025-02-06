@@ -43,3 +43,13 @@ class Post(Model):
     description = fields.TextField()
     type = fields.CharField(max_length=50)  # "image" ou "video"
 
+
+class TrainingMaterial(Model):
+    id = fields.IntField(pk=True)
+    title = fields.CharField(max_length=100)
+    video_url = fields.CharField(max_length=255)  # URL de la vidéo
+    created_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "training_materials"
+
