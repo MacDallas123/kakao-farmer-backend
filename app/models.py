@@ -38,7 +38,8 @@ class Order(Model):
     quantity = fields.IntField()
     status = fields.CharField(max_length=20, default="pending")
     total_price = fields.FloatField()
-    date = fields.CharField(max_length=255)
+    # date = fields.CharField(max_length=255)
+    date = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
         table = "orders"

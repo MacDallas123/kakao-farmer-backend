@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.models import Product, Order
 from app.schemas import ProductCreate, ProductResponse, OrderResponse
-from app.auth import get_current_seller
+from app.auth import get_current_seller, get_current_user
 from app.routes.notifications import send_email_notification  # Import de la fonction d'envoi d'email
 
 router = APIRouter()
@@ -25,13 +25,13 @@ async def delete_product(product_id: int, current_user=Depends(get_current_selle
 
 # Liste des produits d'un vendeur
 @router.get("/products/", response_model=list[ProductResponse])
-async def get_products(current_user=Depends(get_current_seller)):
+async def get_products(current_user=Depends(get_current_user)):
     products = await Product.filter(seller=current_user).all()
     return products
 
 # Obtenir un produit specifique
 @router.get("/products/{product_id}", response_model=ProductResponse)
-async def get_products(product_id : int, current_user=Depends(get_current_seller)):
+async def get_products(product_id : int, current_user=Depends(get_current_user)):
     product = await Product.filter(id=product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")

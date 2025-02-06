@@ -11,7 +11,8 @@ router = APIRouter()
 # Passer une commande
 @router.post("/orders/", response_model=OrderResponse)
 async def create_order(order: OrderCreate, current_user=Depends(get_current_user)):
-    product = await Product.filter(id=order.product_id).first()
+    product = await Product.filter(id=order.product_id).prefetch_related("seller").first()
+    # product = await Product.filter(id=order.product_id).first()
     
     if not product or product.stock < order.quantity:
         raise HTTPException(status_code=400, detail="Product not available or insufficient stock")
@@ -27,17 +28,26 @@ async def create_order(order: OrderCreate, current_user=Depends(get_current_user
 
     return new_order
 
+
 # Liste des commandes passées par un utilisateur
 @router.get("/orders/", response_model=list[OrderResponse])
 async def get_user_orders(current_user=Depends(get_current_user)):
-    orders = await Order.filter(user=current_user).all()
+    orders = await Order.filter(user=current_user).order_by("-id").all()
+    print(orders)
+    return orders
+
+# Liste des commandes passées par un utilisateur
+@router.get("/orders/all", response_model=list[OrderResponse])
+async def get_user_orders(current_user=Depends(get_current_user)):
+    orders = await Order.filter(product__seller=current_user).exclude(user=current_user).order_by("-id").all()
     print(orders)
     return orders
 
 # Annuler une commande
-@router.delete("/orders/{order_id}", dependencies=[Depends(get_current_user)])
+@router.patch("/orders/{order_id}", dependencies=[Depends(get_current_user)])
 async def cancel_order(order_id: int, current_user=Depends(get_current_user)):
-    order = await Order.filter(id=order_id, user=current_user, status="pending").first()
+    order = await Order.filter(id=order_id, user=current_user, status="pending").prefetch_related("product__seller").first()
+    #order = await Order.filter(id=order_id, user=current_user, status="pending").prefetch_related("product").first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found or cannot be canceled")
 
@@ -58,9 +68,9 @@ async def get_pending_orders(current_user=Depends(get_current_seller)):
 
 
 # Refuser une commande (c'est le vendeur qui peut refuser)
-@router.put("/orders/{order_id}/reject", dependencies=[Depends(get_current_seller)])
+@router.patch("/orders/{order_id}/reject", dependencies=[Depends(get_current_seller)])
 async def reject_order(order_id: int, current_user=Depends(get_current_seller)):
-    order = await Order.filter(id=order_id, product__seller=current_user).first()
+    order = await Order.filter(id=order_id, product__seller=current_user).prefetch_related("product", "user").first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found or not owned by you")
     
@@ -71,9 +81,9 @@ async def reject_order(order_id: int, current_user=Depends(get_current_seller)):
 
 
 # Validation d'une commande
-@router.put("/orders/{order_id}/validate", dependencies=[Depends(get_current_seller)])
+@router.patch("/orders/{order_id}/validate", dependencies=[Depends(get_current_seller)])
 async def validate_order(order_id: int, current_user=Depends(get_current_seller)):
-    order = await Order.filter(id=order_id, product__seller=current_user).first()
+    order = await Order.filter(id=order_id, product__seller=current_user).prefetch_related("product", "user").first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found or not owned by you")
     
