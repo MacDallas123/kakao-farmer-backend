@@ -40,6 +40,7 @@ class Order(Model):
     total_price = fields.FloatField()
     # date = fields.CharField(max_length=255)
     date = fields.DatetimeField(auto_now_add=True)
+    payed = fields.BooleanField(default=False)
 
     class Meta:
         table = "orders"
