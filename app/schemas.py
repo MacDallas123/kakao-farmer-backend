@@ -55,6 +55,7 @@ class OrderResponse(BaseModel):
     quantity: int
     status: str
     total_price: float
+    date : datetime
 
     class Config:
         orm_mode = True
@@ -71,6 +72,7 @@ class PostResponse(BaseModel):
     link: str
     description: str
     type: str
+    date : datetime
 
     class Config:
         orm_mode = True

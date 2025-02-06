@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from app.models import Post as PostModel, Product
 from app.schemas import PostCreate, PostResponse
-from app.auth import get_current_seller
+from app.auth import get_current_seller, get_current_user
 
 router = APIRouter()
 
@@ -30,14 +30,14 @@ async def delete_post(post_id: int, current_user=Depends(get_current_seller)):
 #lister les posts d'un vendeurs precis 
 @router.get("/user-posts/", response_model=list[PostResponse])
 async def get_posts(current_user=Depends(get_current_seller)):
-    posts = await PostModel.filter(product__seller=current_user).prefetch_related("product")
+    posts = await PostModel.filter(product__seller=current_user).order_by('-date').prefetch_related("product")
     return posts
 
 
 # lister tous les postes
 @router.get("/posts/", response_model=list[PostResponse])
-async def get_posts(current_user=Depends(get_current_seller)):
-    posts = await PostModel.all()
+async def get_posts(current_user=Depends(get_current_user)):
+    posts = await PostModel.all().order_by('-date')
     return posts
 
 #lister les posts avec pagination
