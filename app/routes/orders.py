@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.models import Product, Order
 from app.schemas import OrderCreate, OrderResponse
-from app.auth import get_current_user, get_current_seller
+from app.auth import get_current_seller, get_current_user
 from app.routes.notifications import send_email_notification
 from fpdf import FPDF  # Pour générer le PDF
 
@@ -74,14 +74,14 @@ async def pay_order(order_id: int, current_user=Depends(get_current_user)):
 
 # Liste des commandes en attente pour les produits d'un vendeur
 @router.get("/orders/pending/", response_model=list[OrderResponse])
-async def get_pending_orders(current_user=Depends(get_current_seller)):
+async def get_pending_orders(current_user=Depends(get_current_user)):
     orders = await Order.filter(product__seller=current_user, status="pending").prefetch_related("product").all()
     return orders
 
 
 # Refuser une commande (c'est le vendeur qui peut refuser)
-@router.patch("/orders/{order_id}/reject", dependencies=[Depends(get_current_seller)])
-async def reject_order(order_id: int, current_user=Depends(get_current_seller)):
+@router.patch("/orders/{order_id}/reject", dependencies=[Depends(get_current_user)])
+async def reject_order(order_id: int, current_user=Depends(get_current_user)):
     order = await Order.filter(id=order_id, product__seller=current_user).prefetch_related("product", "user").first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found or not owned by you")
@@ -93,8 +93,8 @@ async def reject_order(order_id: int, current_user=Depends(get_current_seller)):
 
 
 # Validation d'une commande
-@router.patch("/orders/{order_id}/validate", dependencies=[Depends(get_current_seller)])
-async def validate_order(order_id: int, current_user=Depends(get_current_seller)):
+@router.patch("/orders/{order_id}/validate", dependencies=[Depends(get_current_user)])
+async def validate_order(order_id: int, current_user=Depends(get_current_user)):
     order = await Order.filter(id=order_id, product__seller=current_user).prefetch_related("product", "user").first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found or not owned by you")

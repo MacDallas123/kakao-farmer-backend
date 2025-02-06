@@ -9,13 +9,13 @@ router = APIRouter()
 
 # Création d'un produit
 @router.post("/products/", response_model=ProductResponse)
-async def create_product(product: ProductCreate, current_user=Depends(get_current_seller)):
+async def create_product(product: ProductCreate, current_user=Depends(get_current_user)):
     new_product = await Product.create(seller=current_user, **product.dict())
     return new_product
 
 # Suppression d'un produit
-@router.delete("/products/{product_id}", dependencies=[Depends(get_current_seller)])
-async def delete_product(product_id: int, current_user=Depends(get_current_seller)):
+@router.delete("/products/{product_id}", dependencies=[Depends(get_current_user)])
+async def delete_product(product_id: int, current_user=Depends(get_current_user)):
     product = await Product.filter(id=product_id, seller=current_user).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found or not owned by you")
@@ -40,7 +40,7 @@ async def get_products(product_id : int, current_user=Depends(get_current_user))
 
 # Mise à jour d'un produit
 @router.put("/products/{product_id}", response_model=ProductResponse)
-async def update_product(product_id: int, product: ProductCreate, current_user=Depends(get_current_seller)):
+async def update_product(product_id: int, product: ProductCreate, current_user=Depends(get_current_user)):
     existing_product = await Product.filter(id=product_id, seller=current_user).first()
     if not existing_product:
         raise HTTPException(status_code=404, detail="Product not found or not owned by you")
