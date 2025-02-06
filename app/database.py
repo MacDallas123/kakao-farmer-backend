@@ -10,7 +10,7 @@ async def init_db():
 
     
     # Supprimer toutes les tables
-    # await Tortoise._drop_databases()
+    await Tortoise._drop_databases() 
 
     # Créer toutes les tables
     await Tortoise.generate_schemas()
