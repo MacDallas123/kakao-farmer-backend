@@ -9,7 +9,7 @@ router = APIRouter()
 
 #Creer un post
 @router.post("/posts/", response_model=PostResponse)
-async def create_post(post: PostCreate, current_user=Depends(get_current_seller)):
+async def create_post(post: PostCreate, current_user=Depends(get_current_user)):
     product = await Product.filter(id=post.product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -18,8 +18,8 @@ async def create_post(post: PostCreate, current_user=Depends(get_current_seller)
     return new_post
 
 #supprimer un post 
-@router.delete("/posts/{post_id}", dependencies=[Depends(get_current_seller)])
-async def delete_post(post_id: int, current_user=Depends(get_current_seller)):
+@router.delete("/posts/{post_id}", dependencies=[Depends(get_current_user)])
+async def delete_post(post_id: int, current_user=Depends(get_current_user)):
     post = await PostModel.filter(id=post_id).first()
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -29,7 +29,7 @@ async def delete_post(post_id: int, current_user=Depends(get_current_seller)):
 
 #lister les posts d'un vendeurs precis 
 @router.get("/user-posts/", response_model=list[PostResponse])
-async def get_posts(current_user=Depends(get_current_seller)):
+async def get_posts(current_user=Depends(get_current_user)):
     posts = await PostModel.filter(product__seller=current_user).order_by('-date').prefetch_related("product")
     return posts
 
@@ -43,7 +43,7 @@ async def get_posts(current_user=Depends(get_current_user)):
 #lister les posts avec pagination
 
 """@router.get("/posts/paginated/?skip={skip}&limit={limit}", response_model=list[PostResponse])
-async def get_paginated_posts(skip: int = 0, limit: int = 1, current_user=Depends(get_current_seller)):
+async def get_paginated_posts(skip: int = 0, limit: int = 1, current_user=Depends(get_current_user)):
     posts = await PostModel.all().offset(skip).limit(limit).prefetch_related("product")
     return posts"""
 
