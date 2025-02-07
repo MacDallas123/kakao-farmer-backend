@@ -21,13 +21,13 @@ def send_email_notification(to_email: str, subject: str, message: str):
         # Configuration de l'email
         msg = MIMEText(message)
         msg['Subject'] = subject
-        msg['From'] = "your_email@example.com"
+        msg['From'] = "tsakeuflora@gmail.com"
         msg['To'] = to_email
 
         # Envoi de l'email
-        with smtplib.SMTP('smtp.example.com', 587) as server:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
-            server.login("your_email@example.com", "your_password")
+            server.login("tsakeuflora@gmail.com", "obij btxo roik jeru")
             server.send_message(msg)
 
     except EmailNotValidError as e:
