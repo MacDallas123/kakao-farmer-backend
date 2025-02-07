@@ -55,7 +55,6 @@ class OrderResponse(BaseModel):
     quantity: int
     status: str
     total_price: float
-    date : datetime
 
     class Config:
         orm_mode = True
@@ -73,6 +72,34 @@ class PostResponse(BaseModel):
     description: str
     type: str
     date : datetime
+
+    class Config:
+        orm_mode = True
+
+
+class TrainingMaterialCreate(BaseModel):
+    title: str
+    video_url: str
+
+class TrainingMaterialResponse(BaseModel):
+    id: int
+    title: str
+    video_url: str
+    created_at: str
+
+    class Config:
+        orm_mode = True
+
+
+class TrainingMaterialCreate(BaseModel):
+    title: str
+    video_url: str
+
+class TrainingMaterialResponse(BaseModel):
+    id: int
+    title: str
+    video_url: str
+    created_at: str
 
     class Config:
         orm_mode = True

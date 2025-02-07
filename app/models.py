@@ -38,9 +38,8 @@ class Order(Model):
     quantity = fields.IntField()
     status = fields.CharField(max_length=20, default="pending")
     total_price = fields.FloatField()
-    # date = fields.CharField(max_length=255)
-    date = fields.DatetimeField(auto_now_add=True)
-    payed = fields.BooleanField(default=False)
+    created_at = fields.DatetimeField(auto_now_add=True)  # Ajout du champ créé à
+
 
     class Meta:
         table = "orders"
@@ -68,14 +67,13 @@ class Notification(Model):
     class Meta:
         table = "notifications"
 
-class Formation(Model):
+
+class TrainingMaterial(Model):
     id = fields.IntField(pk=True)
-    content = fields.TextField(null=True)
-    link = fields.CharField(max_length=255, null=True)
-    description = fields.TextField(null=True)
-    type = fields.CharField(max_length=50)  # "texte" ou "video"
-    date = fields.DatetimeField(auto_now_add=True)
-    user = fields.ForeignKeyField("models.User", related_name="posts")
+    title = fields.CharField(max_length=100)
+    video_url = fields.CharField(max_length=255)  # URL de la vidéo
+    created_at = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
-        table = "formations"
+        table = "training_materials"
+
