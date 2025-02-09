@@ -59,6 +59,16 @@ async def set_as_read(notification_id: int, current_user=Depends(get_current_use
     return {"msg": "Notification set as read"}
 
 
+# read all notifications
+@router.patch("/read-all", dependencies=[Depends(get_current_user)])
+async def set_all_as_read(current_user=Depends(get_current_user)):
+    notifications = await Notification.filter(read_at=None).all()
+    for notification in notifications:
+        notification.read_at = datetime.now()
+        await notification.save()
+
+    return {"msg": "All unread Notifications read"}
+
 #supprimer une notification
 @router.delete("/{notification_id}", dependencies=[Depends(get_current_user)])
 async def delete_notification(notification_id: int, current_user=Depends(get_current_user)):
