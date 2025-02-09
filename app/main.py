@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.database import init_db, close_db
-from app.routes import orders, posts, products, training_materials, users, protected, notifications, formations
+from app.routes import orders, posts, products, training_materials, users, protected, notifications
 
 app = FastAPI()
 
@@ -14,7 +14,6 @@ async def shutdown():
 
 app.include_router(users.router)
 app.include_router(notifications.router)
-app.include_router(formations.router)
 app.include_router(protected.router)
 app.include_router(posts.router)
 app.include_router(orders.router)

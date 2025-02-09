@@ -5,6 +5,7 @@ from app.models import Product, Order
 from app.schemas import OrderCreate, OrderResponse
 from app.auth import get_current_seller, get_current_user
 from app.routes.notifications import send_email_notification
+import os
 from fpdf import FPDF  # Pour générer le PDF
 
 router = APIRouter()
@@ -101,7 +102,7 @@ async def validate_order(order_id: int, current_user=Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Order not found or not owned by you")
     
     # Décrémenter le stock du produit
-    product = await Product.filter(id=order.product.id).first()
+    product = await Product.filter(id=order.product.id).prefetch_related("seller").first()
     product.stock -= order.quantity
     await product.save()
 
@@ -118,7 +119,9 @@ async def validate_order(order_id: int, current_user=Depends(get_current_user)):
     pdf.cell(200, 10, f"Total Price: {order.total_price}", ln=True)
     pdf.cell(200, 10, f"Seller Name: {product.seller.username}", ln=True)
     pdf.cell(200, 10, f"Seller Email: {product.seller.email}", ln=True)
-
+    
+    # S'assurer que le dossier orders existe
+    os.makedirs("orders", exist_ok=True)
     # Enregistrer le PDF
     pdf_file_path = f"orders/{order.id}_invoice.pdf"
     pdf.output(pdf_file_path)
