@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 class UserCreate(BaseModel):
     name: str
@@ -55,7 +55,7 @@ class OrderResponse(BaseModel):
     quantity: int
     status: str
     total_price: float
-    date : datetime
+    created_at: datetime
 
     class Config:
         orm_mode = True
@@ -73,6 +73,34 @@ class PostResponse(BaseModel):
     description: str
     type: str
     date : datetime
+
+    class Config:
+        orm_mode = True
+
+
+class TrainingMaterialCreate(BaseModel):
+    title: str
+    video_url: str
+
+class TrainingMaterialResponse(BaseModel):
+    id: int
+    title: str
+    video_url: str
+    created_at: str
+
+    class Config:
+        orm_mode = True
+
+
+class TrainingMaterialCreate(BaseModel):
+    title: str
+    video_url: str
+
+class TrainingMaterialResponse(BaseModel):
+    id: int
+    title: str
+    video_url: str
+    created_at: str
 
     class Config:
         orm_mode = True
@@ -97,6 +125,7 @@ class NotificationResponse(BaseModel):
     title: str
     content: str
     date : datetime
+    read_at : Optional[datetime]
 
 class VideoFormationCreate(BaseModel):
     link : str
@@ -119,3 +148,4 @@ class FormationResponse(BaseModel):
     description : str
     type : str
     date : datetime
+    read_at : datetime

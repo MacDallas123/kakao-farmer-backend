@@ -1,9 +1,11 @@
 # app/routers/orders.py
+from collections import defaultdict
 from fastapi import APIRouter, Depends, HTTPException
 from app.models import Product, Order
 from app.schemas import OrderCreate, OrderResponse
 from app.auth import get_current_seller, get_current_user
 from app.routes.notifications import send_email_notification
+import os
 from fpdf import FPDF  # Pour générer le PDF
 
 router = APIRouter()
@@ -100,7 +102,7 @@ async def validate_order(order_id: int, current_user=Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Order not found or not owned by you")
     
     # Décrémenter le stock du produit
-    product = await Product.filter(id=order.product.id).first()
+    product = await Product.filter(id=order.product.id).prefetch_related("seller").first()
     product.stock -= order.quantity
     await product.save()
 
@@ -117,7 +119,9 @@ async def validate_order(order_id: int, current_user=Depends(get_current_user)):
     pdf.cell(200, 10, f"Total Price: {order.total_price}", ln=True)
     pdf.cell(200, 10, f"Seller Name: {product.seller.username}", ln=True)
     pdf.cell(200, 10, f"Seller Email: {product.seller.email}", ln=True)
-
+    
+    # S'assurer que le dossier orders existe
+    os.makedirs("orders", exist_ok=True)
     # Enregistrer le PDF
     pdf_file_path = f"orders/{order.id}_invoice.pdf"
     pdf.output(pdf_file_path)
@@ -126,3 +130,29 @@ async def validate_order(order_id: int, current_user=Depends(get_current_user)):
     send_email_notification(order.user.email, "Order Confirmation", f"Your order has been validated. Invoice: {pdf_file_path}")
 
     return {"msg": "Order validated successfully"}
+
+
+
+
+##### METHODES QUI COMMUNIQUE LES DONNÉES POUR LE TABLEAU DE BORD #####
+
+@router.get("/sales_stats/")
+async def get_sales_stats(current_user=Depends(get_current_seller)):
+    # Récupérer toutes les commandes validées du vendeur
+    orders = await Order.filter(
+        product__seller=current_user,
+        status="validated"  # Filtre pour ne prendre que les commandes validées
+    ).prefetch_related("product").all()
+    
+    # Dictionnaire pour stocker le nombre de ventes par produit par mois
+    sales_stats = defaultdict(lambda: defaultdict(int))
+
+    for order in orders:
+        # Récupérer le mois et l'année de la date de la commande
+        month = order.created_at.strftime("%Y-%m")  # Format YYYY-MM
+        product_name = order.product.name
+        
+        # Incrémenter le compteur
+        sales_stats[product_name][month] += order.quantity
+
+    return sales_stats
