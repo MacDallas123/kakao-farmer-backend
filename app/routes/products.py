@@ -3,7 +3,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.models import Product, Order
 from app.schemas import ProductCreate, ProductResponse, OrderResponse
 from app.auth import get_current_seller, get_current_user
-from app.routes.notifications import send_email_notification  # Import de la fonction d'envoi d'email
 
 router = APIRouter()
 
