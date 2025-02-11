@@ -5,3 +5,6 @@ pydantic
 email-validator
 python-multipart
 fpdf
+PIL
+numpy
+tensorflow
