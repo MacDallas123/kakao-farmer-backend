@@ -13,7 +13,6 @@ class User(Model):
     products = fields.ReverseRelation["Product"]   # Defines a reverse relation to Product model
     orders = fields.ReverseRelation["Order"]  # Defines a reverse relation to Order model
     formations = fields.ReverseRelation["Formation"]  # Defines a reverse relation to Formation model
-    posts_likes = fields.ManyToManyField("models.Post", related_name="liked_posts", through="likes")
 
     class Meta:
         table = "users"
@@ -50,7 +49,7 @@ class Post(Model):
     link = fields.CharField(max_length=255)
     description = fields.TextField()
     type = fields.CharField(max_length=50)  # "image" ou "video"
-    likes = fields.ManyToManyField("models.User", related_name="liked_posts", through="likes")
+    likes_count = fields.IntField(default=0)
     date = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
@@ -78,3 +77,9 @@ class TrainingMaterial(Model):
     class Meta:
         table = "training_materials"
 
+
+class Like(Model):
+    id = fields.IntField(pk=True)
+    user_id = fields.IntField()  # ID de l'utilisateur
+    material_id = fields.IntField()  # ID de l'élément (support de formation, produit, etc.)
+    is_liked = fields.BooleanField(default=False)  # État du like
