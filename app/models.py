@@ -42,6 +42,7 @@ class Post(Model):
     link = fields.CharField(max_length=255)
     description = fields.TextField()
     type = fields.CharField(max_length=50)  # "image" ou "video"
+    likes_count = fields.IntField(default=0)
 
 
 class TrainingMaterial(Model):
@@ -53,3 +54,9 @@ class TrainingMaterial(Model):
     class Meta:
         table = "training_materials"
 
+
+class Like(Model):
+    id = fields.IntField(pk=True)
+    user_id = fields.IntField()  # ID de l'utilisateur
+    material_id = fields.IntField()  # ID de l'élément (support de formation, produit, etc.)
+    is_liked = fields.BooleanField(default=False)  # État du like
