@@ -14,7 +14,7 @@ router = APIRouter(prefix="/models", tags=["models"])
 # model link : https://drive.google.com/file/d/1ji-PAZZOVxl5AuiM1_BRIz1qSvMoIKny/view?usp=sharing
 # ID du fichier Google Drive (modifie avec le tien)
 FILE_ID = "1ji-PAZZOVxl5AuiM1_BRIz1qSvMoIKny"
-MODEL_PATH = "trained_models/cacao_disease_model.h5"
+MODEL_PATH = "cacao_disease_model.h5"
 
 # URL de téléchargement directe depuis Google Drive
 GDRIVE_URL = f"https://drive.google.com/uc?id={FILE_ID}"

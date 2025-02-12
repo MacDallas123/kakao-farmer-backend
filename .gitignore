@@ -6,3 +6,4 @@ app/*/__pycache__
 env/
 orders/
 trained_models/
+cacao_disease_model.h5
