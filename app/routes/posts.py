@@ -108,3 +108,18 @@ async def get_likers(post_id: int):
     likers = [like.user_id for like in likes]
 
     return {"post_id": post_id, "likers": likers}
+
+#methode qui indique si l'utilisateur actuel a deja like un post
+@router.get("/likes/{post_id}/user/liked")
+async def get_liker(post_id: int, current_user=Depends(get_current_user)):
+    # Vérifiez si l'utilisateur a déjà liké ce post
+    existing_like = await Like.filter(user_id=current_user.id, material_id=post_id).first()
+    post = await PostModel.filter(id=post_id).first()
+
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    
+    return {
+        "post_id": post_id,
+        "is_liked": existing_like.is_liked if existing_like else True
+    }

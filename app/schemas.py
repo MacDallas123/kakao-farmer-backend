@@ -73,6 +73,7 @@ class PostResponse(BaseModel):
     description: str
     type: str
     date : datetime
+    likes_count : int
 
     class Config:
         orm_mode = True
