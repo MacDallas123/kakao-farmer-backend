@@ -37,8 +37,7 @@ class Order(Model):
     quantity = fields.IntField()
     status = fields.CharField(max_length=20, default="pending")
     total_price = fields.FloatField()
-    created_at = fields.DatetimeField(auto_now_add=True)  # Ajout du champ créé à
-
+    created_at = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
         table = "orders"
@@ -67,6 +66,8 @@ class Notification(Model):
     class Meta:
         table = "notifications"
 
+    class Meta:
+        table = "posts"
 
 class TrainingMaterial(Model):
     id = fields.IntField(pk=True)
@@ -77,9 +78,8 @@ class TrainingMaterial(Model):
     class Meta:
         table = "training_materials"
 
-
 class Like(Model):
     id = fields.IntField(pk=True)
     user_id = fields.IntField()  # ID de l'utilisateur
-    material_id = fields.IntField()  # ID de l'élément (support de formation, produit, etc.)
+    material_id = fields.IntField()  # ID de l'élément
     is_liked = fields.BooleanField(default=False)  # État du like

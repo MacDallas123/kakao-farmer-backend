@@ -1,6 +1,7 @@
 from tortoise import Tortoise, run_async
 
-DB_URL = "sqlite://db.sqlite3"
+#DB_URL = "postgres://user:password@localhost:5432/dbname"  # Modifiez avec vos informations
+DB_URL = "postgres://marilyn:motdepasse2003@localhost:5432/kakao-farmer"
 
 async def init_db():
     await Tortoise.init(

@@ -28,7 +28,6 @@ class ProductCreate(BaseModel):
     city: str
     stock: int
 
-
 class ProductResponse(BaseModel):
     id: int
     seller_id: int  # ID du vendeur
@@ -40,13 +39,11 @@ class ProductResponse(BaseModel):
     class Config:
         orm_mode = True
 
-
 class OrderCreate(BaseModel):
     user_id: int
     product_id: int
     quantity: int
     total_price: float
-
 
 class OrderResponse(BaseModel):
     id: int
