@@ -8,6 +8,6 @@ requests
 fpdf
 Pillow
 numpy
-tensorflow
 asyncpg
 python-dotenv
+#tensorflow
