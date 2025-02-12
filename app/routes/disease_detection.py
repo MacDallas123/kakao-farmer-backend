@@ -1,12 +1,40 @@
-from fastapi import FastAPI, File, UploadFile
+import os
+import requests
+from fastapi import FastAPI, APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
 from PIL import Image
 import io
 import numpy as np
 import tensorflow as tf
 
+
+# User router
+router = APIRouter(prefix="/models", tags=["models"])
+
+# model link : https://drive.google.com/file/d/1ji-PAZZOVxl5AuiM1_BRIz1qSvMoIKny/view?usp=sharing
+# ID du fichier Google Drive (modifie avec le tien)
+FILE_ID = "1ji-PAZZOVxl5AuiM1_BRIz1qSvMoIKny"
+MODEL_PATH = "trained_models/cacao_disease_model.h5"
+
+# URL de téléchargement directe depuis Google Drive
+GDRIVE_URL = f"https://drive.google.com/uc?id={FILE_ID}"
+
+def download_model():
+    """Télécharge le modèle depuis Google Drive si non présent en local."""
+    if not os.path.exists(MODEL_PATH):
+        print("Téléchargement du modèle depuis Google Drive...")
+        response = requests.get(GDRIVE_URL, stream=True)
+        with open(MODEL_PATH, "wb") as f:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+        print("Modèle téléchargé avec succès.")
+
+# Télécharger le modèle au démarrage
+download_model()
+
 # Charger le modèle entraîné
-model = tf.keras.models.load_model("trained_models/cacao_disease_model.h5")
+model = tf.keras.models.load_model(MODEL_PATH)
 
 # Dictionnaire contenant les descriptions et causes des maladies
 disease_info = {
@@ -27,9 +55,10 @@ disease_info = {
     }
 }
 
-app = FastAPI()
+# app = FastAPI()
 
-@app.post("/predict/")
+# @app.post("/predict/")
+@router.post("/predict/")
 async def predict(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
 

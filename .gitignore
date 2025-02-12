@@ -5,3 +5,4 @@ app/*/__pycache__
 *.sqlite3-*
 env/
 orders/
+trained_models/

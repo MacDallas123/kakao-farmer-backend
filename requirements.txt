@@ -5,7 +5,7 @@ pydantic
 email-validator
 python-multipart
 fpdf
-PIL
+Pillow
 numpy
 tensorflow
 asyncpg
