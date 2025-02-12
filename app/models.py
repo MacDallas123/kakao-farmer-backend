@@ -60,14 +60,10 @@ class Notification(Model):
     content = fields.TextField()
     user = fields.ForeignKeyField("models.User", related_name="notifications")
     date = fields.DatetimeField(auto_now_add=True)
-    #read = fields.BooleanField(default=False)
     read_at = fields.DatetimeField(null=True)
 
     class Meta:
         table = "notifications"
-
-    class Meta:
-        table = "posts"
 
 class TrainingMaterial(Model):
     id = fields.IntField(pk=True)
