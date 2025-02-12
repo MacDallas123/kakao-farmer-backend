@@ -31,7 +31,9 @@ def download_model():
         print("Modèle téléchargé avec succès.")
 
 # Télécharger le modèle au démarrage
+print("Download model")
 download_model()
+print("Finish to download model")
 
 # Charger le modèle entraîné
 model = tf.keras.models.load_model(MODEL_PATH)
