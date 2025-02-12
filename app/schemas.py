@@ -7,12 +7,9 @@ class UserCreate(BaseModel):
     password: str
     status: str = "user"
 
-
 class Token(BaseModel):
     access_token: str
     token_type: str
-
-    
 
 class ProductCreate(BaseModel):
     seller_id: int
@@ -20,7 +17,6 @@ class ProductCreate(BaseModel):
     price: float
     city: str
     stock: int
-
 
 class ProductResponse(BaseModel):
     id: int
@@ -33,13 +29,11 @@ class ProductResponse(BaseModel):
     class Config:
         orm_mode = True
 
-
 class OrderCreate(BaseModel):
     user_id: int
     product_id: int
     quantity: int
     total_price: float
-
 
 class OrderResponse(BaseModel):
     id: int
@@ -67,7 +61,6 @@ class PostResponse(BaseModel):
 
     class Config:
         orm_mode = True
-
 
 class TrainingMaterialCreate(BaseModel):
     title: str

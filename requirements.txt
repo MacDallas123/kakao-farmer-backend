@@ -8,3 +8,4 @@ fpdf
 PIL
 numpy
 tensorflow
+asyncpg
