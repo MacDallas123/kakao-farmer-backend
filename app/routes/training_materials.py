@@ -5,12 +5,12 @@ from app.auth import get_current_user, is_admin
 
 router = APIRouter()
 
-@router.post("/training_materials/", response_model=TrainingMaterialResponse, dependencies=[Depends(is_admin)])
+@router.post("/training_materials/", response_model=TrainingMaterialResponse, dependencies=[Depends(get_current_user)]) # is_admin
 async def create_training_material(material: TrainingMaterialCreate):
     new_material = await TrainingMaterial.create(**material.dict())
     return new_material
 
-@router.delete("/training_materials/{material_id}", dependencies=[Depends(is_admin)])
+@router.delete("/training_materials/{material_id}", dependencies=[Depends(get_current_user)]) # is_admin
 async def delete_training_material(material_id: int):
     material = await TrainingMaterial.filter(id=material_id).first()
     if not material:
