@@ -4,6 +4,7 @@ tortoise-orm
 pydantic
 email-validator
 python-multipart
+requests
 fpdf
 Pillow
 numpy

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.database import init_db, close_db
-from app.routes import orders, posts, products, training_materials, users, protected, notifications, disease_detection
+from app.routes import orders, posts, products, training_materials, users, protected, notifications , disease_detection
 
 app = FastAPI()
 
