@@ -10,5 +10,6 @@ Pillow
 numpy
 asyncpg
 python-dotenv
-tflite_runtime
-tflite
+tensorflow
+#tflite_runtime===2.13.0
+#tflite
