@@ -10,4 +10,4 @@ Pillow
 numpy
 asyncpg
 python-dotenv
-tflite-runtime
+tflite
