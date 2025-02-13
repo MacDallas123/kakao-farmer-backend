@@ -6,7 +6,8 @@ from PIL import Image
 import io
 import numpy as np
 #import tensorflow as tf
-import tensorflow_lite as tflite
+
+import tflite_runtime.interpreter as tflite
 
 
 # User router
