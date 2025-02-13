@@ -5,7 +5,8 @@ from fastapi.responses import JSONResponse
 from PIL import Image
 import io
 import numpy as np
-import tensorflow as tf
+#import tensorflow as tf
+import tensorflow_lite as tflite
 
 
 # User router
@@ -14,7 +15,7 @@ router = APIRouter(prefix="/models", tags=["models"])
 # model link : https://drive.google.com/file/d/1ji-PAZZOVxl5AuiM1_BRIz1qSvMoIKny/view?usp=sharing
 # ID du fichier Google Drive (modifie avec le tien)
 FILE_ID = "1ji-PAZZOVxl5AuiM1_BRIz1qSvMoIKny"
-MODEL_PATH = "cacao_disease_model.h5"
+MODEL_PATH = "model_kakao_farmer_app.zip" #"cacao_disease_model.h5"
 
 # URL de téléchargement directe depuis Google Drive
 GDRIVE_URL = f"https://drive.google.com/uc?id={FILE_ID}"
@@ -31,12 +32,30 @@ def download_model():
         print("Modèle téléchargé avec succès.")
 
 # Télécharger le modèle au démarrage
-print("Download model")
-download_model()
-print("Finish to download model")
+# print("Download model")
+# download_model()
+# print("Finish to download model")
 
 # Charger le modèle entraîné
-model = tf.keras.models.load_model(MODEL_PATH)
+def load_tflite_model(model_path):
+    """Load TFLite model from file."""
+    interpreter = tflite.Interpreter(model_path=model_path)
+    interpreter.allocate_tensors()
+    return interpreter
+
+# Load the TFLite model
+interpreter = load_tflite_model(MODEL_PATH)
+
+def predict_with_tflite(interpreter, image_array):
+    """Run prediction on the image using the TFLite model."""
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
+
+    interpreter.set_tensor(input_details[0]['index'], image_array)
+    interpreter.invoke()
+    output_data = interpreter.get_tensor(output_details[0]['index'])
+    return output_data
+#model = tf.keras.models.load_model(MODEL_PATH)
 
 # Dictionnaire contenant les descriptions et causes des maladies
 disease_info = {
@@ -67,10 +86,10 @@ async def predict(file: UploadFile = File(...)):
     # Prétraitement de l'image
     image = image.resize((224, 224))  # Redimensionner selon votre modèle
     image_array = np.array(image) / 255.0  # Normaliser si nécessaire
-    image_array = np.expand_dims(image_array, axis=0)  # Ajouter une dimension pour le batch
+    image_array = np.expand_dims(image_array, axis=0).astype(np.float32)  # Ajouter une dimension pour le batch
 
-    # Faire la prédiction
-    predictions = model.predict(image_array)
+    # Faire la prédiction avec TFLite
+    predictions = predict_with_tflite(interpreter, image_array)
     class_idx = np.argmax(predictions)  # Obtenir l'index de la classe prédite
 
     # Classes du modèle
