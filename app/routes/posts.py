@@ -121,5 +121,5 @@ async def get_liker(post_id: int, current_user=Depends(get_current_user)):
     
     return {
         "post_id": post_id,
-        "is_liked": existing_like.is_liked if existing_like else True
+        "is_liked": existing_like.is_liked if existing_like else False
     }
